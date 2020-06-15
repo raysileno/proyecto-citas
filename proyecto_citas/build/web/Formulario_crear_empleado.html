@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html class="main">
+    <head>
+        <title>Formulario del empleado</title>
+        <link rel='stylesheet' type='text/css' href='resource/index.css'/>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="center">
+        <h1>DATOS DEL EMPLEADO</h1>
+        <form action="CrearEmpleado" method="POST">
+            <p>DNI: <input type="text" name="dni" required/></p>
+            <p>Nombre: <input type="text" name="nombre" required/></p>
+            <p>Apellidos: <input type="text" name="apellidos" required/></p>
+            <p>Password: <input type="password" name="pass" required/></p>
+            <p>Mesa: <input type="text" name="mesa"/></p>
+            <p>Tipo de trámite: 
+                <select name="tiptra">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            <p><input type="submit" name="guardar" value="Guardar"/>
+        </form>
+        <form action="Menu_gestion_empleados.html" method="POST">
+            <input type="submit" name="volver" value="Volver"/>
+        </form>
+        </div>
+    </body>
+</html>

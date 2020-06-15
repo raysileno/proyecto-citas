@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html class="main">
+    <head>
+        <title>Menú del supervisor</title>
+        <link rel='stylesheet' type='text/css' href='resource/index.css'/>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="center">
+        <h1>MENÚ PRINCIPAL DEL SUPERVISOR</h1>
+        <form action="MenuSupervisorTramites" method="POST">
+            <fieldset>
+                <legend><h3>Gestionar datos de clientes</h3></legend>            
+                <input type="submit" name="llamar" value="Clientes"/>
+            </fieldset>
+        </form>
+        <form action="Menu_gestion_empleados.html" method="POST">
+            <fieldset>
+                <legend><h3>Gestionar empleados</h3></legend> 
+                <input type="submit" name="gestionar" value="Empleados"/>
+            </fieldset>
+        </form>
+        <form action="MenuConsultas" method="POST">
+            <fieldset>
+                <legend><h3>Realizar consultas</h3></legend> 
+                <input type="submit" name="consultar" value="Consultas"/>
+            </fieldset>
+        </form>
+        <form action="index.jsp" method="Post">            
+            <p><input type="submit" name="desconectar" value="Desconectar"/>
+        </form>
+        </div>
+    </body>
+</html>

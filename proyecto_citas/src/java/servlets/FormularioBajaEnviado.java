@@ -1,0 +1,179 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package servlets;
+
+import beans.ConexionEJB;
+import entidades_POJO.Citas;
+import entidades_POJO.Empleado;
+import entidades_POJO.Historial;
+import entidades_POJO.TramiteAltas;
+import entidades_POJO.TramiteBajas;
+import entidades_POJO.Tramites;
+import entidades_POJO.Usuario;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ *
+ * @author Eric
+ */
+@WebServlet(name = "FormularioBajaEnviado", urlPatterns = {"/FormularioBajaEnviado"})
+public class FormularioBajaEnviado extends HttpServlet {
+
+    @EJB
+    ConexionEJB conEJB;
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html class='main'>");
+            out.println("<head>");
+            out.println("<title>Formulario enviado</title>");   
+            out.println("<link rel='stylesheet' type='text/css' href='resource/index.css'/>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<div class='center'>");
+            
+            List<TramiteBajas> lista = conEJB.findAllTramiteBajas();
+            int id;
+            if(lista.isEmpty()){
+                id = 1;
+            }else{
+                id = (lista.get(lista.size()-1).getIdBaja()) + 1;
+            }
+            //String motivo = request.getParameter("motivo");
+            //String corrienteDePago = request.getParameter("corr");
+            String motivo;
+            String [] checkbox = request.getParameterValues("chk");
+            if(checkbox == null){
+                motivo = "INDEFINIDO";
+            }else{
+                motivo = "";
+                for (String checkbox1 : checkbox) {
+                    motivo = motivo + checkbox1 + ",";
+                }
+                motivo = motivo.substring(0, motivo.length() - 1);
+            }
+            List<Historial> listaHis = conEJB.findAllHistorial();
+            int idHis;
+            if(listaHis.isEmpty()){
+                idHis = 1;
+            }else{
+                idHis = (listaHis.get(listaHis.size()-1).getIdHistorial()) + 1;
+            }
+            ConexionEJB.usu.setDni(request.getParameter("dni"));
+            if(!conEJB.existeUsuario(ConexionEJB.usu)){
+                out.println("<h1>Este usuario no se encuentra registrado en la base de datos</h1>");
+            }else{
+                Historial hist = new Historial(idHis, conEJB.obtenerFecha(), ConexionEJB.inicio, conEJB.obtenerHora(), true);
+                hist.setDniEmpleado(ConexionEJB.empleado);
+                hist.setDniUsuario(ConexionEJB.usu);
+                hist.setTipoTramite(new Tramites(ConexionEJB.empleado.getTipoTramite()));
+                TramiteAltas traAlt = conEJB.findAltaByDni(ConexionEJB.usu);
+                TramiteBajas traBa = new TramiteBajas(id, conEJB.obtenerFecha(), motivo, traAlt.getCorrientePago());
+                traBa.setDniEmpleado(ConexionEJB.empleado);
+                traBa.setDniUsuario(ConexionEJB.usu);
+                traBa.setTipoTramite(new Tramites(2));
+                Usuario usuario = conEJB.findUsuarioByDni(request.getParameter("dni"));
+                usuario.setEstado("Baja");
+
+                //MODIFICAR DATOS EN LA BASE DE DATOS
+                if(conEJB.existeAlta(ConexionEJB.usu)){
+                    conEJB.insertarHistorial(hist); 
+                    conEJB.insertarBaja(traBa); 
+                    conEJB.eliminarAlta(ConexionEJB.usu);
+                    conEJB.modificarUsuario(usuario);
+                    
+                    Empleado empl = ConexionEJB.empleado;
+                    List<Citas> listaCitas = conEJB.findCitaByTipo(empl);
+                    if(!listaCitas.isEmpty()){
+                        //ELIMINAR CITA DE LA TABLA CITAS            
+                        conEJB.eliminarCita();
+                    }
+                    out.println("<h1>USUARIO DADO DE BAJA SATISFACTORIAMENTE</h1>");
+                }else{
+                    out.println("<h1>Este usuario no estaba dado de alta</h1>");
+                    out.println("<h2>No se le puede dar de baja</h2>");
+                    //ELIMINAR CITA DE LA TABLA CITAS            
+                    conEJB.eliminarCita();
+                }  
+            }            
+            
+            String ruta;
+            if(ConexionEJB.empleado.getTipoTramite()==4){
+                ruta="MenuSupervisorTramites";
+            }else{
+                ruta="Menu_empleado.html";
+            }
+            out.println("<form action=\"" + ruta + "\" method=\"POST\">"
+                    + "<input type=\"submit\" name=\"volver\" value=\"Volver\" />"
+                    + "</form>");
+            out.println("</div>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+    
+
+}

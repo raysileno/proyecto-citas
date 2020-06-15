@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html class="main">
+    <head>
+        <title>Selección de trámites</title>
+        <link rel='stylesheet' type='text/css' href='resource/index.css'/></link>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="center">
+        <h1>Selección del tipo de trámite</h1>
+        <fieldset>
+            <legend>Tipo de trámites</legend>
+            <form action="Formulario1" method="POST">
+                <p>Formulario de alta.
+                    <input type="submit" name="form1" value="Altas"/></p>
+            </form>
+            <form action="Formulario2" method="POST">
+                <p>Formulario de baja.
+                    <input type="submit" name="form2" value="Bajas"/></p>
+            </form>
+            <form action="Formulario3" method="POST">
+                <p>Formulario de suspensión.
+                    <input type="submit" name="form3" value="Suspensiones"/></p>
+            </form>            
+        </fieldset>
+        <form action="MenuSupervisorTramites" method="POST">
+            <p><input type="submit" name="voler" value="Volver"/>
+        </form>
+        </div>
+    </body>
+</html>
